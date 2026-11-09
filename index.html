@@ -195,6 +195,8 @@ function updateImpactChart(results){
   const height=Math.abs(delta)/maxAbs*105;
   const y=delta&gt;=0?143-height:143;
   const bar=$(&#x27;impactBar&#x27;+id);
+  bar.setAttribute(&#x27;y&#x27;,y.toFixed(2));
+  bar.setAttribute(&#x27;height&#x27;,height.toFixed(2));
   bar.style.y=y.toFixed(2)+&#x27;px&#x27;;
   bar.style.height=height.toFixed(2)+&#x27;px&#x27;;
   bar.style.fill=delta&gt;=0?&#x27;#147d73&#x27;:&#x27;#ad5960&#x27;;
