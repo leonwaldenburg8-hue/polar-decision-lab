@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1672 941" width="1672" height="941" role="img" aria-labelledby="title desc">
+<title id="title">Meet Leon</title><desc id="desc">A short introduction to this case study</desc>
+<defs>
+<linearGradient id="cream" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fcfaf5"/><stop offset=".6" stop-color="#f8f5ef"/><stop offset="1" stop-color="#e8f1eb"/></linearGradient>
+<linearGradient id="wave" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#b9d6d0"/><stop offset="1" stop-color="#2b625d"/></linearGradient>
+<linearGradient id="teal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#315d58"/><stop offset="1" stop-color="#164a4c"/></linearGradient>
+<filter id="shadow"><feGaussianBlur stdDeviation="16"/></filter>
+</defs>
+<rect width="1672" height="941" fill="url(#cream)"/>
+<path d="M0 842 Q140 760 310 805 T650 765 T980 816 T1320 770 T1672 810 L1672 941 L0 941Z" fill="#bed1c9" opacity=".36"/>
+<path d="M530 941 Q860 820 1060 851 T1672 620 L1672 941Z" fill="url(#wave)" opacity=".43"/>
+<path d="M910 941 Q1270 717 1672 711 L1672 941Z" fill="#2a6862" opacity=".47"/>
+<path d="M1260 941 Q1505 785 1672 798 L1672 941Z" fill="#164c4c" opacity=".50"/>
+<path d="M67 160 h145" stroke="#396761" stroke-width="8"/>
+<text x="65" y="369" font-size="170" font-family="Georgia, 'Times New Roman', serif" fill="#1c292b" font-weight="400" letter-spacing="-8">Meet Leon</text>
+<text x="66" y="445" font-size="51" font-style="italic" font-family="Georgia, 'Times New Roman', serif" fill="#1c292b">A short introduction to this case study</text>
+<path d="M70 543 v60" stroke="#396f67" stroke-width="8"/>
+<text x="96" y="584" font-family="Arial, Helvetica, sans-serif" font-size="32" fill="#1c2d32">Commercial Business Analyst application</text>
+<circle cx="1450" cy="435" r="368" fill="none" stroke="#aac9c0" stroke-width="4" opacity=".75"/>
+<g fill="#b5cdc6" opacity=".40">
+<rect x="1040" y="570" width="74" height="210" rx="3"/><rect x="1140" y="516" width="74" height="264" rx="3"/><rect x="1240" y="455" width="74" height="325" rx="3"/><rect x="1340" y="364" width="74" height="416" rx="3"/><rect x="1440" y="483" width="74" height="297" rx="3"/>
+</g>
+<path d="M1040 710 L1136 665 L1245 588 L1325 600 L1428 510 L1537 411" stroke="#42776e" stroke-width="5" fill="none" opacity=".95"/>
+<g fill="#42776e"><circle cx="1136" cy="665" r="12"/><circle cx="1245" cy="588" r="12"/><circle cx="1325" cy="600" r="12"/><circle cx="1428" cy="510" r="12"/><circle cx="1537" cy="411" r="12"/></g>
+<g transform="translate(1050 216) rotate(-20)" stroke="#396861" stroke-width="5" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M-2 13 L103 13 Q129 13 129 4 Q122 -5 102 1 L-3 -1 L-35 -29 L-56 -28 L-30 9 L-55 38 L-34 38Z"/><path d="M40 4 L-1 -47 L-24 -47 L6 9"/><path d="M40 10 L7 68 L-14 68 L20 9"/></g>
+<g transform="translate(1490 202)" stroke="#315f5c" stroke-width="4" fill="none"><path d="M-57 101V10H47V101M-80 101V40H-57M70 101V40H47"/><rect x="-13" y="72" width="26" height="29"/><path d="M-38 29h12m20 0H6m20 0h12M-38 55h12m20 0H6m20 0h12M-38 80h12m64 0h12"/></g>
+<g fill="#315f5c" font-size="25" font-family="Arial, sans-serif" text-anchor="middle"><text x="1426" y="181">★</text><text x="1460" y="171">★</text><text x="1494" y="166">★</text><text x="1528" y="171">★</text><text x="1562" y="181">★</text></g>
+<ellipse cx="919" cy="559" rx="117" ry="115" fill="#315c57" opacity=".21" filter="url(#shadow)"/>
+<circle cx="911" cy="532" r="114" fill="url(#teal)" stroke="#fffdf8" stroke-width="7"/>
+<path d="M878 482 Q878 472 891 479 L965 525 Q976 533 964 540 L891 589 Q878 596 878 585Z" fill="#fffdf8"/>
+</svg>
