@@ -45,6 +45,12 @@ body.immersive{overflow:hidden}body.immersive .dashboard-shell{position:fixed;in
 .contact .contact-email{margin:13px auto 0;font-size:12px;color:#accbd3}.contact-email a{text-decoration:underline;text-underline-offset:3px}
 @media(max-width:800px){.intro-layout{grid-template-columns:1fr;gap:25px}.intro-section{padding:48px 0}.intro-copy h2{margin-bottom:14px}}
 @media(max-width:530px){.video-card{padding:13px}.video-card-center .video-icon{height:50px;width:50px}.video-card-center .video-icon svg{height:24px}.video-card h3{font-size:18px}}
+
+/* Meet Leon poster is independent of the unchanged Google Drive video. */
+.video-card .meet-leon-poster{position:absolute;inset:0;width:100%;height:100%;display:block;padding:0;border:0;border-radius:inherit;z-index:3;cursor:pointer;background:#f8f6f0 url("meet-leon-cover.svg") center center / cover no-repeat}
+.video-card .meet-leon-poster:hover{filter:brightness(.985)}
+.video-card .meet-leon-poster:focus-visible{outline:4px solid #287a78;outline-offset:-5px}
+.visually-hidden{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 </style>
 </head>
 <body>
@@ -66,7 +72,7 @@ body.immersive{overflow:hidden}body.immersive .dashboard-shell{position:fixed;in
  <p>My background combines international tourism and hospitality with digital advertising operations, where I work with campaign data, reporting accuracy, budgets and cross-functional processes.</p>
  <p>This example focuses on a practical commercial question: which action could improve forecast revenue and contribution when bookings are behind plan—and what evidence would be needed before acting?</p>
  <p class="intro-caption">Independent concept with synthetic data. The calculations and presentation were developed with AI assistance and reviewed as a demonstration, not as a production revenue-management forecast.</p></div>
- <div class="intro-media"><div class="video-card" id="introductionVideo" data-video-status="published" aria-label="Leon Waldenburg — video introduction" style="padding:0;display:block;background:#102f40"><iframe title="Meet Leon — video introduction" src="https://drive.google.com/file/d/1iNjW6y3F5pbn6WZLnahQlLZDypeHoI8Q/preview" width="100%" height="100%" style="display:block;width:100%;height:100%;border:0;position:relative;z-index:2" allow="autoplay; fullscreen" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
+ <div class="intro-media"><div class="video-card" id="introductionVideo" data-video-status="published" aria-label="Leon Waldenburg — video introduction" style="padding:0;display:block;background:#102f40"><button class="meet-leon-poster" id="meetLeonPoster" type="button" aria-label="Play Leon's introduction video" title="Play Leon's introduction video"><span class="visually-hidden">Play Leon's introduction video</span></button><template id="meetLeonIframeTemplate"><iframe title="Meet Leon — video introduction" src="https://drive.google.com/file/d/1iNjW6y3F5pbn6WZLnahQlLZDypeHoI8Q/preview" width="100%" height="100%" style="display:block;width:100%;height:100%;border:0;position:relative;z-index:2" allow="autoplay; fullscreen" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe></template></div>
  </div>
 </div></section>
 <section class="section" id="challenge"><div class="container"><div class="sectiontop"><div><span class="smallhead">02 / The commercial question</span><h2>One voyage is pacing below its occupancy target. What should leadership do?</h2></div><p>A report identifies the gap. Decision support connects that gap to realistic options, financial trade-offs, and the evidence still needed.</p></div>
@@ -264,6 +270,21 @@ function setExpanded(state){expanded=state;body.classList.toggle('immersive',sta
 button.addEventListener('click',()=>setExpanded(!expanded));
 document.addEventListener('keydown',(e)=>{if(e.key==='Escape'&&expanded)setExpanded(false)});
 window.addEventListener('message',(e)=>{if(e.source!==frame.contentWindow||!e.data)return;if(e.data.channel==='polar-portfolio-close-expanded'&&expanded){setExpanded(false);return;}if(e.data.channel!=='polar-portfolio-sizing')return;const h=Number(e.data.height);if(Number.isFinite(h)&&h>100&&h<9000)frame.style.height=Math.ceil(h+18)+'px';});
+})();
+
+/* The same Drive iframe is added when the visitor clicks on the cover. */
+(function(){
+ const cover=document.getElementById('meetLeonPoster');
+ const template=document.getElementById('meetLeonIframeTemplate');
+ const card=document.getElementById('introductionVideo');
+ if(!cover||!template||!card)return;
+ cover.addEventListener('click',function(){
+   const originalFrame=template.content.querySelector('iframe');
+   if(!originalFrame)return;
+   const player=originalFrame.cloneNode(true);
+   card.classList.add('is-loaded');
+   cover.replaceWith(player);
+ });
 })();
 </script>
 </body></html>
