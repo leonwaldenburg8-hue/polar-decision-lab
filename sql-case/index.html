@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="description" content="A reproducible SQLite analytical case: joining expedition booking snapshots, aggregating commercial KPIs, flagging occupancy gaps, and preparing a decision-ready visualization dataset.">
+<title>SQL Analytical Case | Polar Decision Lab — Leon Waldenburg</title>
+<style>
+:root{--ink:#122e3c;--deep:#102b38;--teal:#146b72;--muted:#627680;--paper:#fbfaf7;--line:#dce4e2;--card:#fff;--pale:#edf5f1;--orange:#c77f44}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font:15px/1.65 ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:var(--paper);color:var(--ink)}a{color:inherit}button{font:inherit;cursor:pointer}
+.wrap{width:min(1140px,calc(100% - 48px));margin-inline:auto}.mast{position:sticky;top:0;z-index:20;background:rgba(251,250,247,.96);border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}.nav{min-height:69px;display:flex;align-items:center;justify-content:space-between;gap:18px}.brand{font-size:11px;font-weight:850;letter-spacing:1.75px;text-transform:uppercase;text-decoration:none;display:flex;align-items:center;gap:12px}.mark{background:var(--deep);color:white;border-radius:5px;padding:8px 9px;font-size:12px}.back{color:#43656c;text-decoration:none;font-size:12px;font-weight:750}.back:hover,.download:hover{text-decoration:underline}
+.hero{background:linear-gradient(125deg,#f4f4ef,#fbfaf7 60%,#e8f3ee);border-bottom:1px solid var(--line);padding:77px 0 70px;position:relative;overflow:hidden}.hero:after{content:"";position:absolute;right:-210px;top:-250px;width:660px;height:660px;border:1px solid #c1d9d0;border-radius:50%;box-shadow:0 0 0 72px rgba(200,220,211,.2),0 0 0 148px rgba(200,220,211,.1);pointer-events:none}.hero .wrap{position:relative;z-index:1}.eyebrow{font-size:11px;font-weight:850;letter-spacing:2px;text-transform:uppercase;color:var(--teal)}h1{font-size:clamp(44px,6vw,78px);line-height:1.05;letter-spacing:-3.6px;max-width:900px;margin:18px 0 22px;font-weight:660}h1 em{font-style:normal;color:var(--teal)}.lead{font-size:18px;line-height:1.65;max-width:800px;color:#405762;margin:0 0 25px}.pills{display:flex;gap:9px;flex-wrap:wrap}.pill{border:1px solid #ccdeda;border-radius:30px;padding:5px 12px;font-size:11px;color:#375e62;background:#ffffffbf}.hero-foot{margin-top:30px;font-size:12px;color:#74878c;max-width:760px}
+.section{padding:68px 0}h2{font-size:clamp(28px,3.1vw,42px);letter-spacing:-1.1px;line-height:1.18;margin:10px 0 14px}h3{font-size:20px;line-height:1.25;letter-spacing:-.4px;margin:0 0 10px}.sub{color:#516771;max-width:790px;margin:0 0 22px}.kicker{letter-spacing:1.55px;font-size:10px;text-transform:uppercase;font-weight:900;color:var(--teal)}.metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:24px}.metric{padding:24px 20px;border:1px solid var(--line);border-radius:11px;background:#fff}.metric b{display:block;font-size:37px;font-weight:760;line-height:1.12;letter-spacing:-1px;margin-bottom:10px}.metric span{display:block;color:#5d747d;font-size:12px}
+.roadmap{background:#f1f5f2;border-block:1px solid #e0e8e1}.tables{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:26px}.table-card{padding:24px;border:1px solid var(--line);border-radius:12px;background:#fff;min-width:0}.table-card strong{font-size:16px}.table-card small{display:block;color:#617880;margin:9px 0;font-size:12px}.table-card code{display:block;color:#315861;font-size:11px;white-space:normal;line-height:1.7;margin-top:12px}.table-card em{font-style:normal;font-weight:850;color:var(--teal)}.map-note{font-size:12px;color:#657983;margin-top:17px}.downloads{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}.download{font-size:12px;font-weight:800;text-decoration:none;border:1px solid #bfd2d0;border-radius:7px;background:#fff;padding:10px 15px;color:#173e4a}
+.query-list{display:grid;gap:18px;margin-top:26px}.case{border:1px solid var(--line);border-radius:14px;background:white;overflow:hidden}.case-head{padding:24px 27px 20px;border-bottom:1px solid #e7edeb}.step{font-size:11px;font-weight:900;color:var(--teal);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}.case-head p{font-size:13px;color:#61727a;margin:0;max-width:850px}.case-body{padding:22px 27px 26px}.case-body h4{margin:17px 0 11px;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#70828a}.table-scroll{overflow-x:auto;border:1px solid #e4e9e8;border-radius:8px}table{border-collapse:collapse;width:100%;min-width:630px;font-size:12px}th,td{text-align:left;padding:12px 14px;border-bottom:1px solid #e7ecea;white-space:nowrap}tr:last-child td{border-bottom:0}th{background:#f3f6f4;color:#445d65;font-size:11px;font-weight:800}td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}tbody tr:hover{background:#fbfcfa}.flag{font-size:10px;font-weight:800;padding:4px 8px;border-radius:50px;background:#eaf4e8;color:#286348}.flag.priority{background:#fff0e5;color:#9b541d}.flag.monitor{background:#edf4f8;color:#32637c}
+.insight{margin-top:18px;background:#f1f7f3;border-left:3px solid #277d74;border-radius:0 8px 8px 0;padding:16px 20px;color:#344f58;font-size:13px}.insight strong{color:#123c44}.sql-show{margin-top:18px;border:1px solid #dce4e0;border-radius:9px;background:#f9faf8;overflow:hidden}.sql-show summary{cursor:pointer;padding:13px 17px;font-size:12px;font-weight:850;list-style-position:inside;color:#1d4e55}.sql-show[open] summary{border-bottom:1px solid #dae3df}.code-top{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:10px 17px;color:#a2c0c2;background:#102c37;font:10px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.6px}.copy{border:1px solid #54757b;background:#1b404b;color:#eaf8f7;padding:5px 11px;border-radius:5px;font:11px ui-sans-serif,system-ui}pre{margin:0;padding:18px 20px;max-height:440px;overflow:auto;background:#102c37;color:#e5f5ee;font-size:11px;line-height:1.8;tab-size:2}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}.chart-card{margin:8px 0 15px;border:1px solid #e2e9e6;border-radius:10px;padding:22px 22px 15px}.chart-row{display:grid;grid-template-columns:180px 1fr 92px;gap:15px;align-items:center;margin:0 0 20px;font-size:12px}.chart-row .chart-name{font-weight:800}.chart-track{position:relative;height:14px;background:#e9eeec;border-radius:12px}.chart-fill{height:14px;width:var(--fill);background:linear-gradient(90deg,#136c75,#35958b);border-radius:12px}.chart-target{position:absolute;top:-7px;left:var(--target);width:2px;height:28px;background:#c27a48}.chart-val{text-align:right;font-weight:850}.chart-legend{font-size:11px;color:#71818a}.legend-line{display:inline-block;width:2px;height:15px;background:#c27a48;vertical-align:middle;margin-right:5px}
+.cta{padding:48px 0 67px}.cta-inner{padding:35px 38px;background:var(--deep);color:#fff;border-radius:13px;display:flex;align-items:center;justify-content:space-between;gap:30px}.cta h2{font-size:28px;margin:8px 0}.cta p{font-size:13px;color:#bfd1d5;max-width:640px;margin:0}.go{display:inline-block;text-align:center;white-space:nowrap;text-decoration:none;border-radius:8px;padding:15px 22px;background:#d5ece5;color:#0e3340;font-size:13px;font-weight:850}.go:hover{background:#e6f7f1}.fine{font-size:12px;color:#6f8087;max-width:1000px;margin-top:19px}.footer{border-top:1px solid var(--line);padding:25px 0 40px;font-size:11px;color:#71848b}.footer .wrap{display:flex;gap:12px;flex-wrap:wrap;justify-content:space-between}
+@media(max-width:900px){.metric-grid{grid-template-columns:repeat(2,1fr)}.tables{grid-template-columns:1fr}.chart-row{grid-template-columns:135px 1fr 67px;gap:9px}.cta-inner{display:block}.go{margin-top:22px}}
+@media(max-width:560px){.wrap{width:min(100% - 32px,1140px)}.hero{padding:49px 0 45px}h1{font-size:45px;letter-spacing:-2px}.lead{font-size:15px}.metric-grid{gap:9px}.metric{padding:17px}.metric b{font-size:29px}.case-head{padding:20px}.case-body{padding:16px}.chart-row{grid-template-columns:1fr 58px;gap:8px;margin-bottom:22px}.chart-track{grid-column:1/-1;grid-row:2}.chart-val{grid-column:2;grid-row:1}.chart-name{grid-column:1;grid-row:1}.cta-inner{padding:28px}.brand{font-size:10px}.back{font-size:11px}}
+</style>
+</head>
+<body>
+<header class="mast"><nav class="wrap nav" aria-label="Primary navigation"><a class="brand" href="../"><span class="mark">LW</span> Leon Waldenburg / Selected Work</a><a class="back" href="../">← Back to Polar Decision Lab</a></nav></header>
+<main>
+<section class="hero"><div class="wrap">
+<div class="eyebrow">02 / A companion commercial analytics case · SQLite</div>
+<h1>From source tables<br>to <em>commercial decisions.</em></h1>
+<p class="lead">A small, reproducible SQL analysis of expedition booking pace, occupancy risk, and simplified revenue performance. Four queries connect source records to decision-ready outputs.</p>
+<div class="pills"><span class="pill">INNER JOIN</span><span class="pill">GROUP BY · SUM · AVG</span><span class="pill">CASE WHEN</span><span class="pill">SQLite · downloadable SQL</span></div>
+<p class="hero-foot">Executed against the same three fictional voyages featured in the main decision lab. The SQL and source CSVs are available below to inspect or rerun.</p>
+</div></section>
+<section class="section"><div class="wrap"><span class="kicker">At a glance / verified SQL outputs</span><h2>What the underlying records show.</h2><p class="sub">One synthetic booking snapshot per voyage. Forecasts combine currently booked guests and assumed future pickup, not a measured time series.</p>
+<div class="metric-grid">
+<div class="metric"><b>3</b><span>Voyages analyzed</span></div>
+<div class="metric"><b>500</b><span>Available guest places</span></div>
+<div class="metric"><b>80.2%</b><span>Capacity-weighted projected occupancy · 401 of 500</span></div>
+<div class="metric"><b>30</b><span>Combined guests below voyage-specific occupancy targets</span></div>
+</div></div></section>
+<section class="section roadmap" id="data"><div class="wrap"><span class="kicker">01 / Data preparation</span><h2>Three small tables. Defined relationships.</h2><p class="sub">Rather than analyzing one flattened graphic, the query joins voyage metadata, a booking snapshot and commercial inputs using the shared <code>voyage_id</code> key.</p>
+<div class="tables">
+<div class="table-card"><strong>voyages</strong><small>3 records · One row per fictional sailing</small><code><em>voyage_id</em> · primary key<br>voyage_name · region<br>days_out</code></div>
+<div class="table-card"><strong>booking_snapshots</strong><small>3 records · Current booking and projected pickup</small><code><em>voyage_id</em> · foreign / primary key<br>booked · pickup</code></div>
+<div class="table-card"><strong>commercial_metrics</strong><small>3 records · Capacity, fares and costs</small><code><em>voyage_id</em> · foreign / primary key<br>capacity · target_pct · booked_fare<br>future_fare · ancillary<br>variable_cost · fixed_cost · marketing</code></div>
+</div>
+<p class="map-note">Relationship: voyages (1) → (1) booking_snapshots; voyages (1) → (1) commercial_metrics. These are illustrative snapshots, not a production warehouse schema or historical booking curve.</p>
+<div class="downloads">
+<a class="download" href="./analysis.sql" download>↓ Complete runnable SQLite script</a>
+<a class="download" href="./data/voyages.csv" download>↓ Voyages CSV</a>
+<a class="download" href="./data/booking_snapshots.csv" download>↓ Bookings CSV</a>
+<a class="download" href="./data/commercial_metrics.csv" download>↓ Commercial metrics CSV</a>
+</div>
+</div></section>
+<section class="section" id="analysis"><div class="wrap"><span class="kicker">02 / Executed queries and results</span><h2>Four steps from records to insight.</h2><p class="sub">Each section includes the actual SQLite query and its computed result. Expand the SQL to inspect or copy it; the full script recreates all three tables and reruns the analysis.</p>
+<div class="query-list">
+<article class="case" id="join">
+<div class="case-head"><div class="step">Query 01 · INNER JOIN</div><h3>Connect bookings to commercial context</h3><p>Without joining booking snapshots to capacity and occupancy targets, a raw number of bookings cannot tell leadership whether the voyage is on pace.</p></div>
+<div class="case-body"><div class="table-scroll"><table><thead><tr><th>Voyage</th><th class="num">Days out</th><th class="num">Booked</th><th class="num">Pickup</th><th class="num">Projected</th><th class="num">Capacity</th><th class="num">Occupancy</th><th class="num">Target</th></tr></thead><tbody>
+<tr><td>Greenland Explorer</td><td class="num">35</td><td class="num">119</td><td class="num">16</td><td class="num">135</td><td class="num">168</td><td class="num">80.4%</td><td class="num">87.0%</td></tr>
+<tr><td>Antarctic Discovery</td><td class="num">60</td><td class="num">112</td><td class="num">28</td><td class="num">140</td><td class="num">180</td><td class="num">77.8%</td><td class="num">85.0%</td></tr>
+<tr><td>Arctic Passage</td><td class="num">95</td><td class="num">89</td><td class="num">37</td><td class="num">126</td><td class="num">152</td><td class="num">82.9%</td><td class="num">86.0%</td></tr>
+</tbody></table></div>
+<div class="insight"><strong>Decision implication:</strong> the highest current bookings count does not identify the greatest occupancy gap. Compare against capacity, the target, and the remaining booking window.</div>
+<details class="sql-show"><summary>Show verified SQL query</summary><div class="code-top"><span>SQLITE / QUERY 01</span><button class="copy" data-query="1">Copy query</button></div><pre id="query-1"><code>SELECT v.voyage_name,
+       v.days_out,
+       b.booked,
+       b.pickup,
+       c.capacity,
+       b.booked + b.pickup AS projected_guests,
+       ROUND(100.0 * (b.booked + b.pickup) / c.capacity, 1) AS forecast_occupancy_pct,
+       ROUND(100.0 * c.target_pct, 1) AS target_occupancy_pct
+FROM voyages AS v
+JOIN booking_snapshots AS b USING (voyage_id)
+JOIN commercial_metrics AS c USING (voyage_id)
+ORDER BY v.days_out;</code></pre></details></div></article>
+<article class="case" id="aggregate">
+<div class="case-head"><div class="step">Query 02 · GROUP BY · SUM · AVG</div><h3>Aggregate commercial KPIs by departure horizon</h3><p>Group voyages into near-term and later departures. Use <code>SUM</code> for counts and revenue, a weighted occupancy ratio for capacity, and <code>AVG</code> for the mean voyage-level fare per passenger.</p></div>
+<div class="case-body"><div class="table-scroll"><table><thead><tr><th>Departure window</th><th class="num">Voyages</th><th class="num">Projected guests</th><th class="num">Capacity</th><th class="num">Weighted occupancy</th><th class="num">Avg voyage fare / guest</th><th class="num">Forecast revenue</th></tr></thead><tbody>
+<tr><td>Near term (0–60d)</td><td class="num">2</td><td class="num">275</td><td class="num">348</td><td class="num">79.0%</td><td class="num">$11,547</td><td class="num">$3,515,550</td></tr>
+<tr><td>Later (61+d)</td><td class="num">1</td><td class="num">126</td><td class="num">152</td><td class="num">82.9%</td><td class="num">$14,435</td><td class="num">$2,020,400</td></tr>
+</tbody></table></div>
+<div class="insight"><strong>Decision implication:</strong> the near-term group shows lower capacity-weighted occupancy (79.0% versus 82.9%) with less time to correct it. Revenue alone would conceal this pacing difference.</div>
+<details class="sql-show"><summary>Show verified SQL query</summary><div class="code-top"><span>SQLITE / QUERY 02</span><button class="copy" data-query="2">Copy query</button></div><pre id="query-2"><code>WITH joined AS (
+  SELECT v.voyage_id, v.days_out, b.booked + b.pickup AS projected_guests,
+         c.capacity, c.booked_fare, c.future_fare, c.ancillary,
+         b.booked, b.pickup, c.variable_cost, c.fixed_cost, c.marketing
+  FROM voyages v
+  JOIN booking_snapshots b USING (voyage_id)
+  JOIN commercial_metrics c USING (voyage_id)
+)
+SELECT CASE WHEN days_out &lt;= 60 THEN 'Near term (0-60d)'
+            ELSE 'Later (61+d)' END AS departure_window,
+       COUNT(*) AS voyages,
+       SUM(projected_guests) AS projected_guests,
+       SUM(capacity) AS total_capacity,
+       ROUND(100.0 * SUM(projected_guests) / SUM(capacity), 1) AS weighted_occupancy_pct,
+       ROUND(AVG(1.0 * (booked * booked_fare + pickup * future_fare)
+                 / projected_guests), 0) AS avg_voyage_fare_per_guest_usd,
+       ROUND(SUM(booked * booked_fare + pickup * future_fare
+                 + projected_guests * ancillary), 0) AS forecast_revenue_usd
+FROM joined
+GROUP BY CASE WHEN days_out &lt;= 60 THEN 'Near term (0-60d)'
+                  ELSE 'Later (61+d)' END
+ORDER BY MIN(days_out);</code></pre></details></div></article>
+<article class="case" id="flags">
+<div class="case-head"><div class="step">Query 03 · CASE WHEN</div><h3>Translate KPI deviations into review priorities</h3><p>Compare projected occupancy to each voyage's target. Label a gap of at least five percentage points “Priority review”; smaller positive gaps “Monitor”; otherwise “At or above target.” Thresholds are illustrative, not a Quark policy.</p></div>
+<div class="case-body"><div class="table-scroll"><table><thead><tr><th>Voyage</th><th class="num">Days out</th><th class="num">Projected guests</th><th class="num">Target guests</th><th class="num">Shortfall</th><th class="num">Gap (pp)</th><th>Risk flag</th></tr></thead><tbody>
+<tr><td>Antarctic Discovery</td><td class="num">60</td><td class="num">140</td><td class="num">153</td><td class="num">13</td><td class="num">7.2</td><td><span class="flag priority">Priority review</span></td></tr>
+<tr><td>Greenland Explorer</td><td class="num">35</td><td class="num">135</td><td class="num">147</td><td class="num">12</td><td class="num">6.6</td><td><span class="flag priority">Priority review</span></td></tr>
+<tr><td>Arctic Passage</td><td class="num">95</td><td class="num">126</td><td class="num">131</td><td class="num">5</td><td class="num">3.1</td><td><span class="flag monitor">Monitor</span></td></tr>
+</tbody></table></div>
+<div class="insight"><strong>Decision implication:</strong> Antarctic Discovery and Greenland Explorer deserve earlier diagnosis. A flag means “investigate,” not “automatically discount” — the response still depends on booking pace, margins and demand evidence.</div>
+<details class="sql-show"><summary>Show verified SQL query</summary><div class="code-top"><span>SQLITE / QUERY 03</span><button class="copy" data-query="3">Copy query</button></div><pre id="query-3"><code>WITH joined AS (
+  SELECT v.voyage_name, v.days_out, b.booked, b.pickup,
+         c.capacity, c.target_pct,
+         (CAST(c.capacity * c.target_pct AS INTEGER)
+          + CASE WHEN c.capacity * c.target_pct &gt; CAST(c.capacity * c.target_pct AS INTEGER)
+                 THEN 1 ELSE 0 END) AS target_guests
+  FROM voyages v
+  JOIN booking_snapshots b USING (voyage_id)
+  JOIN commercial_metrics c USING (voyage_id)
+), risk AS (
+  SELECT voyage_name, days_out, capacity, booked + pickup AS projected_guests,
+         target_guests,
+         MAX(0, target_guests - (booked + pickup)) AS shortfall_guests,
+         ROUND(100.0 * (target_pct - 1.0 * (booked + pickup) / capacity), 1) AS gap_pp
+  FROM joined
+)
+SELECT voyage_name, days_out, projected_guests, target_guests, shortfall_guests, gap_pp,
+       CASE WHEN gap_pp &gt;= 5 THEN 'Priority review'
+            WHEN gap_pp &gt; 0 THEN 'Monitor'
+            ELSE 'At or above target' END AS risk_flag
+FROM risk
+ORDER BY gap_pp DESC;</code></pre></details></div></article>
+<article class="case" id="reporting">
+<div class="case-head"><div class="step">Query 04 · Reporting extract</div><h3>Shape a decision-ready visualization dataset</h3><p>Prepare one consistent row per voyage with occupancy, target, modeled revenue and a simplified contribution proxy. The chart immediately below is drawn from these computed SQL results.</p></div>
+<div class="case-body">
+<div class="chart-card" role="img" aria-label="Forecast occupancy versus target: Antarctic Discovery 77.8 percent versus 85 percent; Greenland Explorer 80.4 percent versus 87 percent; Arctic Passage 82.9 percent versus 86 percent">
+<div class="chart-row"><span class="chart-name">Antarctic Discovery</span><div class="chart-track" style="--target:85%"><div class="chart-fill" style="--fill:77.8%"></div><span class="chart-target"></span></div><span class="chart-val">77.8%</span></div>
+<div class="chart-row"><span class="chart-name">Greenland Explorer</span><div class="chart-track" style="--target:87%"><div class="chart-fill" style="--fill:80.4%"></div><span class="chart-target"></span></div><span class="chart-val">80.4%</span></div>
+<div class="chart-row"><span class="chart-name">Arctic Passage</span><div class="chart-track" style="--target:86%"><div class="chart-fill" style="--fill:82.9%"></div><span class="chart-target"></span></div><span class="chart-val">82.9%</span></div>
+<div class="chart-legend"><span class="legend-line"></span> Vertical marker = voyage-specific target; filled bar = forecast occupancy</div></div>
+<div class="table-scroll"><table><thead><tr><th>Voyage</th><th class="num">Forecast revenue</th><th class="num">Contribution proxy</th><th class="num">Contribution / extra guest</th></tr></thead><tbody>
+<tr><td>Antarctic Discovery</td><td class="num">$1,876,000</td><td class="num">$509,000</td><td class="num">$9,400</td></tr>
+<tr><td>Greenland Explorer</td><td class="num">$1,639,550</td><td class="num">$424,550</td><td class="num">$8,650</td></tr>
+<tr><td>Arctic Passage</td><td class="num">$2,020,400</td><td class="num">$513,200</td><td class="num">$10,900</td></tr>
+</tbody></table></div>
+<div class="insight"><strong>Decision implication:</strong> prioritize a deeper demand and margin review rather than using occupancy in isolation. The per-guest contribution is an assumption-based unit metric, not measured incremental profitability.</div>
+<details class="sql-show"><summary>Show verified SQL query</summary><div class="code-top"><span>SQLITE / QUERY 04</span><button class="copy" data-query="4">Copy query</button></div><pre id="query-4"><code>WITH joined AS (
+  SELECT v.voyage_id, v.voyage_name, v.days_out,
+         b.booked, b.pickup, c.capacity, c.target_pct,
+         c.booked_fare, c.future_fare, c.ancillary,
+         c.variable_cost, c.fixed_cost, c.marketing
+  FROM voyages v
+  JOIN booking_snapshots b USING (voyage_id)
+  JOIN commercial_metrics c USING (voyage_id)
+), modeled AS (
+  SELECT *, booked + pickup AS projected_guests,
+         booked * booked_fare + pickup * future_fare
+           + (booked + pickup) * ancillary AS forecast_revenue_usd,
+         fixed_cost + marketing + (booked + pickup) * variable_cost AS modeled_cost_usd
+  FROM joined
+)
+SELECT voyage_id, voyage_name,
+       ROUND(100.0 * projected_guests / capacity, 1) AS forecast_occupancy_pct,
+       ROUND(100.0 * target_pct, 1) AS target_occupancy_pct,
+       ROUND(forecast_revenue_usd, 0) AS forecast_revenue_usd,
+       ROUND(forecast_revenue_usd - modeled_cost_usd, 0) AS contribution_proxy_usd,
+       ROUND(future_fare + ancillary - variable_cost, 0) AS contribution_per_extra_guest_usd
+FROM modeled
+ORDER BY forecast_occupancy_pct ASC;</code></pre></details>
+</div></article>
+</div></div></section>
+<section class="section roadmap"><div class="wrap"><span class="kicker">03 / Reproducibility &amp; interpretation</span><h2>What this analysis establishes.</h2>
+<p class="sub">The SQL demonstrates relational joins, business-oriented aggregation, conditional flags and a consistent reporting extract. The numbers above were executed and checked in SQLite, with matching CSV source records and a downloadable build-and-query script. The queries can be run independently by importing the supplied script into SQLite 3.</p>
+<p class="sub">The source is intentionally small: three fictional departures, each with a single booking snapshot. Future pickup, fares and costs are assumptions. It cannot estimate price elasticity, marketing incrementality or real booking probability. Any commercial action would require historical snapshots, segmentation, cancellations and validated demand responses. AI assistance was used in building this portfolio exercise; the SQL is supplied so the methodology can be inspected.</p>
+</div></section>
+<section class="cta"><div class="wrap"><div class="cta-inner"><div><span class="kicker" style="color:#8fd7cf">Return to the original analysis</span><h2>Explore the interactive decision lab.</h2><p>Use the scenario model to examine how changes in future fares, marketing investment and ancillary revenue flow through the forecast.</p></div><a class="go" href="../#experience">Open interactive dashboard ↗</a></div></div></section>
+</main>
+<footer class="footer"><div class="wrap"><span>© 2026 Leon Waldenburg · Independent, AI-assisted commercial analytics portfolio.</span><span>Fictional data · SQLite · Not affiliated with Quark Expeditions or Travelopia.</span></div></footer>
+<script>
+document.querySelectorAll("[data-query]").forEach(function(button){
+button.addEventListener("click",function(){
+var node=document.getElementById("query-"+button.getAttribute("data-query"));
+if(!node)return;
+var value=node.innerText;
+if(navigator.clipboard&&navigator.clipboard.writeText){
+navigator.clipboard.writeText(value).then(function(){var old=button.textContent;button.textContent="Copied ✓";setTimeout(function(){button.textContent=old},1700)}).catch(function(){button.textContent="Select SQL to copy";});
+}else{button.textContent="Select SQL to copy";}
+});
+});
+</script>
+</body>
+</html>
