@@ -1,0 +1,4 @@
+voyage_id,capacity,target_pct,booked_fare,future_fare,ancillary,variable_cost,fixed_cost,marketing
+CASE-A,180,0.85,12000,13000,1200,4800,650000,45000
+CASE-B,152,0.86,14200,15000,1600,5700,740000,49000
+CASE-C,168,0.87,10800,11600,1250,4200,610000,38000
