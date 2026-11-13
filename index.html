@@ -51,6 +51,14 @@ body.immersive{overflow:hidden}body.immersive .dashboard-shell{position:fixed;in
 .video-card .meet-leon-poster:hover{filter:brightness(.985)}
 .video-card .meet-leon-poster:focus-visible{outline:4px solid #287a78;outline-offset:-5px}
 .visually-hidden{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* Companion SQL case: a prominent route from the portfolio homepage. */
+.sql-feature{display:flex;align-items:center;justify-content:space-between;gap:32px;background:linear-gradient(110deg,#102c3a 0%,#164654 77%,#206c6b 100%);border-radius:12px;padding:25px 27px;margin:30px 0 4px;box-shadow:0 15px 38px rgba(12,43,53,.13);max-width:1050px}
+.sql-feature-copy{display:flex;flex-direction:column;gap:5px}.sql-feature-tag{font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:#9ee0d2;font-weight:850}.sql-feature-title{color:#fff;font-size:22px;letter-spacing:-.55px;line-height:1.25;font-weight:760}.sql-feature-detail{color:#c8dce0;font-size:12px;line-height:1.65}
+.sql-feature-link{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;min-height:58px;padding:16px 24px;background:#d8f0e8;border:1px solid #b3d7cb;border-radius:8px;text-decoration:none;color:#103843;font-size:14px;font-weight:850;transition:background .2s ease,transform .2s ease}
+.sql-feature-link:hover{background:white;transform:translateY(-2px)}.sql-feature-link:focus-visible{outline:3px solid #f0c18a;outline-offset:3px}
+@media(max-width:700px){.sql-feature{align-items:stretch;flex-direction:column;gap:20px;padding:22px;margin-top:25px}.sql-feature-title{font-size:20px}.sql-feature-link{width:100%}}
+
 </style>
 </head>
 <body>
@@ -62,6 +70,10 @@ body.immersive{overflow:hidden}body.immersive .dashboard-shell{position:fixed;in
 <p class="lead">An interactive case study examining how booking pace, occupancy, pricing and commercial costs affect forecast revenue and contribution in expedition travel.</p>
 <div class="herometa"><span class="tag">Revenue management</span><span class="tag">Scenario analysis</span><span class="tag">Executive reporting</span><span class="tag">AI-assisted prototyping</span></div>
 <div class="buttons"><a class="button" href="#experience">Explore the live case <span aria-hidden="true">↗</span></a><a class="button secondary" href="#introduction">Meet Leon</a></div>
+<div class="sql-feature" aria-label="Featured SQL analytical case">
+<div class="sql-feature-copy"><span class="sql-feature-tag">Companion project / verified SQLite analysis</span><strong class="sql-feature-title">From source tables to commercial decisions.</strong><span class="sql-feature-detail">JOIN · GROUP BY / SUM / AVG · CASE WHEN · Executed queries, results and downloadable data</span></div>
+<a class="sql-feature-link" href="sql-case/" aria-label="Explore the SQL analytical case">Explore the SQL case &nbsp;↗</a>
+</div>
 <p class="disclosure">Independent, AI-assisted portfolio study prepared for the Commercial Business Analyst application at Quark Expeditions. All voyages, figures and assumptions are fictional; no internal Quark data is used.</p>
 </div></section>
 
