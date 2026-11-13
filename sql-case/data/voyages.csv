@@ -1,0 +1,4 @@
+voyage_id,voyage_name,region,days_out
+CASE-A,Antarctic Discovery,Antarctica,60
+CASE-B,Arctic Passage,Arctic,95
+CASE-C,Greenland Explorer,Greenland,35
